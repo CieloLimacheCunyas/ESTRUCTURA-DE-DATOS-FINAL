@@ -1,0 +1,48 @@
+// PARTE 2 - Cola de Prioridad (Planificación de CPU)
+
+class ColaPrioridad {
+private:
+    Nodo* frente;
+    Nodo* fin;
+
+public:
+    ColaPrioridad() : frente(nullptr), fin(nullptr) {}
+
+    void encolarProceso(Nodo* proceso) {
+        if (!proceso) return;
+        Nodo* nuevo = new Nodo(proceso->id, proceso->nombre, proceso->prioridad);
+
+        if (!frente || nuevo->prioridad > frente->prioridad) {
+            nuevo->siguiente = frente;
+            frente = nuevo;
+            if (!fin) fin = frente;
+        } else {
+            Nodo* actual = frente;
+            while (actual->siguiente && nuevo->prioridad <= actual->siguiente->prioridad) {
+                actual = actual->siguiente;
+            }
+            nuevo->siguiente = actual->siguiente;
+            actual->siguiente = nuevo;
+            if (!nuevo->siguiente) fin = nuevo;
+        }
+    }
+
+    Nodo* desencolarProceso() {
+        if (!frente) return nullptr;
+        Nodo* temp = frente;
+        frente = frente->siguiente;
+        if (!frente) fin = nullptr;
+        temp->siguiente = nullptr;
+        return temp;
+    }
+
+    void mostrarCola() {
+        Nodo* actual = frente;
+        cout << "\n🧠 Procesos en Cola de CPU:\n";
+        cout << "ID\tNombre\tPrioridad\n";
+        while (actual) {
+            cout << actual->id << "\t" << actual->nombre << "\t" << actual->prioridad << endl;
+            actual = actual->siguiente;
+        }
+    }
+};
