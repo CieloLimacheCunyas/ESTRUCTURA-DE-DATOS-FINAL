@@ -1,6 +1,7 @@
 // PARTE 3 - Gestión de Memoria (Pila) y Menú de Usuario
 
 class PilaMemoria {
+
 private:
     Nodo* cima;
 
@@ -9,12 +10,16 @@ public:
 
     void asignarMemoria(int idProceso) {
         Nodo* nuevo = new Nodo(idProceso, "", 0);
+
+
         nuevo->siguiente = cima;
         cima = nuevo;
     }
 
     int liberarMemoria() {
         if (!cima) return -1;
+
+
         Nodo* temp = cima;
         int id = temp->id;
         cima = cima->siguiente;
@@ -24,8 +29,12 @@ public:
 
     void mostrarMemoria() {
         Nodo* actual = cima;
+
+
         cout << "\n?? Estado de Memoria Asignada:\n";
         cout << "ID de Procesos en la Pila de Memoria:\n";
+
+
         while (actual) {
             cout << actual->id << " ";
             actual = actual->siguiente;
@@ -34,10 +43,12 @@ public:
     }
 };
 
+
 int main() {
     ListaEnlazada lista;
     ColaPrioridad cpu;
     PilaMemoria memoria;
+
 
     int opcion, id, prioridad;
     string nombre;
@@ -94,11 +105,13 @@ int main() {
             case 6:
                 cpu.mostrarCola();
                 break;
+
             case 7:
                 cout << "ID del proceso a asignar memoria: ";
                 cin >> id;
                 memoria.asignarMemoria(id);
                 break;
+
             case 8: {
                 int liberado = memoria.liberarMemoria();
                 if (liberado != -1)
@@ -107,9 +120,11 @@ int main() {
                     cout << "?? Memoria vacía." << endl;
                 break;
             }
+
             case 9:
                 memoria.mostrarMemoria();
                 break;
+
             case 0:
                 cout << "?? Cerrando el sistema..." << endl;
                 break;
