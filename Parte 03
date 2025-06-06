@@ -1,0 +1,122 @@
+// PARTE 3 - Gestión de Memoria (Pila) y Menú de Usuario
+
+class PilaMemoria {
+private:
+    Nodo* cima;
+
+public:
+    PilaMemoria() : cima(nullptr) {}
+
+    void asignarMemoria(int idProceso) {
+        Nodo* nuevo = new Nodo(idProceso, "", 0);
+        nuevo->siguiente = cima;
+        cima = nuevo;
+    }
+
+    int liberarMemoria() {
+        if (!cima) return -1;
+        Nodo* temp = cima;
+        int id = temp->id;
+        cima = cima->siguiente;
+        delete temp;
+        return id;
+    }
+
+    void mostrarMemoria() {
+        Nodo* actual = cima;
+        cout << "\n?? Estado de Memoria Asignada:\n";
+        cout << "ID de Procesos en la Pila de Memoria:\n";
+        while (actual) {
+            cout << actual->id << " ";
+            actual = actual->siguiente;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    ListaEnlazada lista;
+    ColaPrioridad cpu;
+    PilaMemoria memoria;
+
+    int opcion, id, prioridad;
+    string nombre;
+
+    do {
+        cout << "\n===============================\n";
+        cout << "?? SISTEMA DE GESTIÓN DE PROCESOS\n";
+        cout << "===============================\n";
+        cout << "1. ? Agregar proceso\n";
+        cout << "2. ? Eliminar proceso\n";
+        cout << "3. ?? Ver lista de procesos\n";
+        cout << "4. ?? Encolar en CPU\n";
+        cout << "5. ? Ejecutar (desencolar CPU)\n";
+        cout << "6. ?? Ver cola de CPU\n";
+        cout << "7. ?? Asignar memoria\n";
+        cout << "8. ??? Liberar memoria\n";
+        cout << "9. ?? Estado de memoria\n";
+        cout << "0. ?? Salir\n";
+        cout << "Elige una opción: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                cout << "Nombre del proceso: ";
+                cin.ignore();
+                getline(cin, nombre);
+                cout << "Prioridad (1-10): ";
+                cin >> prioridad;
+                lista.insertarProceso(nombre, prioridad);
+                break;
+            case 2:
+                cout << "ID del proceso a eliminar: ";
+                cin >> id;
+                cout << (lista.eliminarProceso(id) ? "Proceso eliminado." : "Proceso no encontrado.") << endl;
+                break;
+            case 3:
+                lista.mostrarProcesos();
+                break;
+            case 4:
+                cout << "ID del proceso a encolar en CPU: ";
+                cin >> id;
+                cpu.encolarProceso(lista.buscarProceso(id));
+                break;
+            case 5: {
+                Nodo* proceso = cpu.desencolarProceso();
+                if (proceso) {
+                    cout << "? Proceso ejecutado: " << proceso->nombre << endl;
+                    delete proceso;
+                } else {
+                    cout << "?? Cola vacía.\n";
+                }
+                break;
+            }
+            case 6:
+                cpu.mostrarCola();
+                break;
+            case 7:
+                cout << "ID del proceso a asignar memoria: ";
+                cin >> id;
+                memoria.asignarMemoria(id);
+                break;
+            case 8: {
+                int liberado = memoria.liberarMemoria();
+                if (liberado != -1)
+                    cout << "??? Memoria liberada para proceso ID: " << liberado << endl;
+                else
+                    cout << "?? Memoria vacía." << endl;
+                break;
+            }
+            case 9:
+                memoria.mostrarMemoria();
+                break;
+            case 0:
+                cout << "?? Cerrando el sistema..." << endl;
+                break;
+            default:
+                cout << "? Opción inválida." << endl;
+        }
+    } while (opcion != 0);
+
+    return 0;
+}
